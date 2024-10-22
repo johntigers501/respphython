@@ -1,36 +1,36 @@
 ﻿# -*- coding: utf-8 -*-
 import os
-from dotenv import load_dotenv
-from flask import Flask, request, abort
-from linebot import LineBotApi, WebhookHandler
-from linebot.exceptions import InvalidSignatureError
-from linebot.models import TextMessage, TextSendMessage
+from linebot.v3 import LineBotApi, WebhookHandler
+from linebot.v3.webhook import MessageEvent, TextMessage
+from linebot.v3.messaging import TextSendMessage
+from flask import Flask, request
 
+from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
 
+# ใช้ environment variables ที่กำหนดใน .env
 line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
 handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 
-@app.route("/callback", methods=['POST'])  # URL สำหรับ webhook
+@app.route("/callback", methods=['POST'])
 def callback():
     signature = request.headers['X-Line-Signature']
     body = request.get_data(as_text=True)
-
     try:
         handler.handle(body, signature)
-    except InvalidSignatureError:
-        abort(400)
-
+    except Exception as e:
+        print(e)
     return 'OK'
 
 @handler.add(MessageEvent, message=TextMessage)  # รับข้อความจากผู้ใช้
 def handle_message(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text='Hello, this is a response from your Line Bot!')
+        TextSendMessage(text=event.message.text)  # ส่งข้อความกลับไปยังผู้ใช้
     )
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(port=3000)
+
