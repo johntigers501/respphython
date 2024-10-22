@@ -1,0 +1,28 @@
+name: Python application  # ตั้งชื่อ workflow นี้ว่า "Python application"
+
+on:  # กำหนดเหตุการณ์ที่จะให้ workflow ทำงาน
+  push:  # เมื่อมีการ push โค้ดไปที่ branch
+    branches: [ master ]
+  pull_request:  # เมื่อมีการส่ง pull request ไปที่ branch
+    branches: [ master ]
+
+jobs:  # กำหนดงานที่ต้องทำ
+  build:
+    runs-on: ubuntu-latest  # รัน workflow บนเซิร์ฟเวอร์ Ubuntu
+
+    steps:  # ขั้นตอนที่จะรันใน workflow
+    - uses: actions/checkout@v2  # ดึงโค้ดจาก repository
+
+    - name: Set up Python  # ตั้งค่า Python environment
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'  # ใช้ Python เวอร์ชัน 3.x
+
+    - name: Install dependencies  # ติดตั้ง dependencies ที่อยู่ในไฟล์ requirements.txt
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run tests  # รันการทดสอบด้วย pytest
+      run: |
+        pytest
