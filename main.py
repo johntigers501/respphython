@@ -1,3 +1,4 @@
+Ôªø# -*- coding: utf-8 -*-
 import os
 from dotenv import load_dotenv
 from flask import Flask, request, abort
@@ -12,7 +13,7 @@ app = Flask(__name__)
 line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
 handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 
-@app.route("/callback", methods=['POST'])  # URL  ”À√—∫ webhook
+@app.route("/callback", methods=['POST'])  # URL ‡∏™‡∏≥‡∏´‡∏£‡∏±‡∏ö webhook
 def callback():
     signature = request.headers['X-Line-Signature']
     body = request.get_data(as_text=True)
@@ -24,7 +25,7 @@ def callback():
 
     return 'OK'
 
-@handler.add(MessageEvent, message=TextMessage)  # √—∫¢ÈÕ§«“¡®“°ºŸÈ„™È
+@handler.add(MessageEvent, message=TextMessage)  # ‡∏£‡∏±‡∏ö‡∏Ç‡πâ‡∏≠‡∏Ñ‡∏ß‡∏≤‡∏°‡∏à‡∏≤‡∏Å‡∏ú‡∏π‡πâ‡πÉ‡∏ä‡πâ
 def handle_message(event):
     line_bot_api.reply_message(
         event.reply_token,
